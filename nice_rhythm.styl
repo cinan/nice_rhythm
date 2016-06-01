@@ -1,0 +1,143 @@
+// Nice Rhythm
+// Fluid vertical rhythm with modular scale. Mobile first.
+//
+// Usage: rhythm()
+//
+// @cinan
+// https://github.com/cinan/gridism
+
+rhythm(
+  _scaleFactor = 1.333,
+  _scaleFactorLarge = 1.618, // golden ratio
+  _baseFontSize = .85rem,
+  _baseFontSizeLarge = 1rem,
+  _baseLineHeight = _baseFontSize * 1.25,
+  _baseLineHeightLarge = _baseFontSizeLarge * 1.25,
+  _minViewportWidth = 35.5rem,
+  _maxViewportWidth = 60rem,
+  _lineHeights = null,
+  _fontScales = null,
+  _bottomMargins = null
+)
+
+  define('scaleFactor', _scaleFactor, true)
+  define('scaleFactorLarge', _scaleFactorLarge, true)
+  define('baseFontSize', _baseFontSize, true)
+  define('baseFontSizeLarge', _baseFontSizeLarge, true)
+  define('baseLineHeight', _baseLineHeight, true)
+  define('baseLineHeightLarge', _baseLineHeightLarge, true)
+  define('minViewportWidth', _minViewportWidth, true)
+  define('maxViewportWidth', _maxViewportWidth, true)
+  define('lineHeights', _lineHeights || {
+    'default': {
+      '0': baseLineHeight * 1,
+      '1': baseLineHeight * 1.5,
+      '2': baseLineHeight * 2,
+      '3': baseLineHeight * 2.5
+    },
+    'large': {
+      '0': baseLineHeightLarge * 1,
+      '1': baseLineHeightLarge * 1.5,
+      '2': baseLineHeightLarge * 2,
+      '3': baseLineHeightLarge * 3
+    }
+  }, true)
+  define('fontScales', _fontScales || {
+    'default': {
+      '0': baseFontSize * (scaleFactor ** 0),
+      '1': baseFontSize * (scaleFactor ** 1),
+      '2': baseFontSize * (scaleFactor ** 2),
+      '3': baseFontSize * (scaleFactor ** 3)
+    },
+    'large': {
+      '0': baseFontSizeLarge * (scaleFactorLarge ** 0),
+      '1': baseFontSizeLarge * (scaleFactorLarge ** 0.5),
+      '2': baseFontSizeLarge * (scaleFactorLarge ** 1.5),
+      '3': baseFontSizeLarge * (scaleFactorLarge ** 2.5)
+    }
+  }, true)
+  define('bottomMargins', _bottomMargins || {
+    'default': {
+      '0': baseLineHeight,
+      '1': baseLineHeight,
+      '2': baseLineHeight,
+      '3': baseLineHeight,
+    },
+    'large': {
+      '0': baseLineHeightLarge,
+      '1': baseLineHeightLarge,
+      '2': baseLineHeightLarge,
+      '3': baseLineHeightLarge
+    }
+  }, true)
+
+fontScale(scale, defaultScale = true)
+  fontScales[defaultScale ? 'default' : 'large']['%s' % scale]
+
+lineHeight(scale, defaultScale = true)
+  lineHeights[defaultScale ? 'default' : 'large']['%s' % scale]
+
+bottomMargin(scale, defaultScale = true)
+  bottomMargins[defaultScale ? 'default' : 'large']['%s' % scale]
+
+stripUnit(num)
+  unit(num, '')
+
+typo(scale)
+  vertSpace('line-height', scale)
+
+  fontSizeMin = fontScale(scale)
+  fontSizeMax = fontScale(scale, false)
+  +cache('font-size:' + fontSizeMin + ',' + fontSizeMax)
+    font-size: fontSizeMin
+
+    @media screen and (min-width: minViewportWidth)
+      font-size: 'calc(%s + %s * ((100vw - %s) / %s))' % (fontSizeMin (stripUnit(fontSizeMax) - stripUnit(fontSizeMin)) minViewportWidth (stripUnit(maxViewportWidth) - stripUnit(minViewportWidth)))
+
+    @media screen and (min-width: maxViewportWidth)
+      font-size: fontSizeMax
+
+  bottomMarginMin = bottomMargin(scale)
+  bottomMarginMax = bottomMargin(scale, false)
+  +cache('margin-bottom:' + bottomMarginMin + ',' + bottomMarginMax)
+    margin-bottom: bottomMarginMin
+
+    @media screen and (min-width: minViewportWidth)
+      margin-bottom: 'calc(%s + %s * ((100vw - %s) / %s))' % (bottomMarginMin (stripUnit(bottomMarginMax) - stripUnit(bottomMarginMin)) minViewportWidth (stripUnit(maxViewportWidth) - stripUnit(minViewportWidth)))
+
+    @media screen and (min-width: maxViewportWidth)
+      margin-bottom: bottomMarginMax
+
+vertSpace(property = 'margin-bottom', scale = 1)
+  lineHeightMin = lineHeight(scale)
+  lineHeightMax = lineHeight(scale, false)
+
+  +cache(property + ':' + lineHeightMin + ',' + lineHeightMax)
+    {property}: lineHeightMin
+
+    @media screen and (min-width: minViewportWidth) {
+      {property}: 'calc(%s + %s * ((100vw - %s) / %s))' % (lineHeightMin (stripUnit(lineHeightMax) - stripUnit(lineHeightMin)) minViewportWidth (stripUnit(maxViewportWidth) - stripUnit(minViewportWidth)))
+    }
+
+    @media screen and (min-width: maxViewportWidth) {
+      {property}: lineHeightMax
+    }
+
+// RUNTIME:
+
+verticalism()
+
+.t0
+  typo(0)
+
+.t1
+  typo(1)
+
+.t2
+  typo(2)
+
+.t3
+  typo(3)
+
+.vert-space
+  vertSpace()

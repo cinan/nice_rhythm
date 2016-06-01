@@ -1,0 +1,24 @@
+{
+  "name": "nice_rhythm",
+  "version": "1.0.0",
+  "description": "Fluid vertical rhythm with modular scale. Mobile first.",
+  "dependencies": {
+    "stylus": "^0.54.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cinan/nice_rhythm.git"
+  },
+  "keywords": [
+    "css",
+    "vertical",
+    "rhythm",
+    "stylus"
+  ],
+  "author": "Cinan Rakosnik",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cinan/nice_rhythm/issues"
+  },
+  "homepage": "https://github.com/cinan/nice_rhythm"
+}
