@@ -1,23 +1,20 @@
 // Nice Rhythm
 // Fluid vertical rhythm with modular scale. Mobile first.
 //
-// Usage: rhythm()
-//
 // @cinan
 // https://github.com/cinan/gridism
 
-rhythm(
-  _scaleFactor = 1.333,
-  _scaleFactorLarge = 1.618, // golden ratio
-  _baseFontSize = .85rem,
-  _baseFontSizeLarge = 1rem,
-  _baseLineHeight = _baseFontSize * 1.25,
-  _baseLineHeightLarge = _baseFontSizeLarge * 1.25,
-  _minViewportWidth = 35.5rem,
-  _maxViewportWidth = 60rem,
-  _lineHeights = null,
-  _fontScales = null,
-  _bottomMargins = null
+niceRhythm(
+_scaleFactor = 1.333,
+_scaleFactorLarge = 1.618, // golden ratio
+_baseFontSize = .85rem,
+_baseFontSizeLarge = 1rem,
+_baseLineHeight = _baseFontSize * 1.25,
+_baseLineHeightLarge = _baseFontSizeLarge * 1.25,
+_minViewportWidth = 35.5rem,
+_maxViewportWidth = 60rem,
+_lineHeights = null,
+_fontScales = null
 )
 
   define('scaleFactor', _scaleFactor, true)
@@ -56,70 +53,41 @@ rhythm(
       '3': baseFontSizeLarge * (scaleFactorLarge ** 2.5)
     }
   }, true)
-  define('bottomMargins', _bottomMargins || {
-    'default': {
-      '0': baseLineHeight,
-      '1': baseLineHeight,
-      '2': baseLineHeight,
-      '3': baseLineHeight,
-    },
-    'large': {
-      '0': baseLineHeightLarge,
-      '1': baseLineHeightLarge,
-      '2': baseLineHeightLarge,
-      '3': baseLineHeightLarge
-    }
-  }, true)
 
-fontScale(scale, defaultScale = true)
+_fontScale(scale = 0, defaultScale = true)
   fontScales[defaultScale ? 'default' : 'large']['%s' % scale]
 
-lineHeight(scale, defaultScale = true)
+_lineHeight(scale = 0, defaultScale = true)
   lineHeights[defaultScale ? 'default' : 'large']['%s' % scale]
 
-bottomMargin(scale, defaultScale = true)
-  bottomMargins[defaultScale ? 'default' : 'large']['%s' % scale]
-
-stripUnit(num)
+_stripUnit(num)
   unit(num, '')
 
-typo(scale)
-  vertSpace('line-height', scale)
+rhythm(scale = 0, ignoreFontSize = false, ignoreLineHeight = false, ignoreMargin = false)
+  unless ignoreLineHeight
+    customRhythm('line-height', scale, base: 'lineHeight')
 
-  fontSizeMin = fontScale(scale)
-  fontSizeMax = fontScale(scale, false)
-  +cache('font-size:' + fontSizeMin + ',' + fontSizeMax)
-    font-size: fontSizeMin
+  unless ignoreFontSize
+    customRhythm('font-size', scale, base: 'fontSize')
 
-    @media screen and (min-width: minViewportWidth)
-      font-size: 'calc(%s + %s * ((100vw - %s) / %s))' % (fontSizeMin (stripUnit(fontSizeMax) - stripUnit(fontSizeMin)) minViewportWidth (stripUnit(maxViewportWidth) - stripUnit(minViewportWidth)))
+  unless ignoreMargin
+    customRhythm('margin-bottom', scale)
+
+customRhythm(property = 'margin-bottom', scale = 0, multiple = 1, base = 'baseLineHeight')
+  if base == 'lineHeight'
+    heightMin = _lineHeight(scale) * multiple
+    heightMax = _lineHeight(scale, false) * multiple
+  else if base == 'fontSize'
+    heightMin = _fontScale(scale) * multiple
+    heightMax = _fontScale(scale, false) * multiple
+  else
+    heightMin = baseLineHeight * multiple
+    heightMax = baseLineHeightLarge * multiple
+
+  {property}: heightMin
+
+  @media screen and (min-width: minViewportWidth)
+  {property}: 'calc(%s + %s * ((100vw - %s) / %s))' % (heightMin (_stripUnit(heightMax) - _stripUnit(heightMin)) minViewportWidth (_stripUnit(maxViewportWidth) - _stripUnit(minViewportWidth)))
 
     @media screen and (min-width: maxViewportWidth)
-      font-size: fontSizeMax
-
-  bottomMarginMin = bottomMargin(scale)
-  bottomMarginMax = bottomMargin(scale, false)
-  +cache('margin-bottom:' + bottomMarginMin + ',' + bottomMarginMax)
-    margin-bottom: bottomMarginMin
-
-    @media screen and (min-width: minViewportWidth)
-      margin-bottom: 'calc(%s + %s * ((100vw - %s) / %s))' % (bottomMarginMin (stripUnit(bottomMarginMax) - stripUnit(bottomMarginMin)) minViewportWidth (stripUnit(maxViewportWidth) - stripUnit(minViewportWidth)))
-
-    @media screen and (min-width: maxViewportWidth)
-      margin-bottom: bottomMarginMax
-
-vertSpace(property = 'margin-bottom', scale = 1)
-  lineHeightMin = lineHeight(scale)
-  lineHeightMax = lineHeight(scale, false)
-
-  +cache(property + ':' + lineHeightMin + ',' + lineHeightMax)
-    {property}: lineHeightMin
-
-    @media screen and (min-width: minViewportWidth) {
-      {property}: 'calc(%s + %s * ((100vw - %s) / %s))' % (lineHeightMin (stripUnit(lineHeightMax) - stripUnit(lineHeightMin)) minViewportWidth (stripUnit(maxViewportWidth) - stripUnit(minViewportWidth)))
-    }
-
-    @media screen and (min-width: maxViewportWidth) {
-      {property}: lineHeightMax
-    }
-
+    {property}: heightMax
