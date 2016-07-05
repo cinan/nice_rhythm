@@ -1,6 +1,6 @@
 {
   "name": "nice_rhythm",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Fluid vertical rhythm with modular scale. Mobile first.",
   "dependencies": {
     "stylus": "^0.54.5"
