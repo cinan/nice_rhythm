@@ -87,7 +87,7 @@ customRhythm(property = 'margin-bottom', scale = 0, multiple = 1, base = 'baseLi
   {property}: heightMin
 
   @media screen and (min-width: minViewportWidth)
-  {property}: 'calc(%s + %s * ((100vw - %s) / %s))' % (heightMin (_stripUnit(heightMax) - _stripUnit(heightMin)) minViewportWidth (_stripUnit(maxViewportWidth) - _stripUnit(minViewportWidth)))
+    {property}: 'calc(%s + %s * ((100vw - %s) / %s))' % (heightMin (_stripUnit(heightMax) - _stripUnit(heightMin)) minViewportWidth (_stripUnit(maxViewportWidth) - _stripUnit(minViewportWidth)))
 
     @media screen and (min-width: maxViewportWidth)
-    {property}: heightMax
+      {property}: heightMax
