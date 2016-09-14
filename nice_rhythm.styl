@@ -2,7 +2,7 @@
 // Fluid vertical rhythm with modular scale. Mobile first.
 //
 // @cinan
-// https://github.com/cinan/gridism
+// https://github.com/cinan/nice_rhythm
 
 niceRhythm(
 _scaleFactor = 1.333,
@@ -14,77 +14,90 @@ _baseLineHeightLarge = _baseFontSizeLarge * 1.25,
 _minViewportWidth = 35.5rem,
 _maxViewportWidth = 60rem,
 _lineHeights = null,
-_fontScales = null
+_fontScales = null,
+_font = 'font1'
 )
 
-  define('scaleFactor', _scaleFactor, true)
-  define('scaleFactorLarge', _scaleFactorLarge, true)
-  define('baseFontSize', _baseFontSize, true)
-  define('baseFontSizeLarge', _baseFontSizeLarge, true)
-  define('baseLineHeight', _baseLineHeight, true)
-  define('baseLineHeightLarge', _baseLineHeightLarge, true)
-  define('minViewportWidth', _minViewportWidth, true)
-  define('maxViewportWidth', _maxViewportWidth, true)
-  define('lineHeights', _lineHeights || {
-    'default': {
-      '0': baseLineHeight * 1,
-      '1': baseLineHeight * 1.5,
-      '2': baseLineHeight * 2,
-      '3': baseLineHeight * 2.5
+  _rulesCollection = {}
+  _rulesCollection[_font] = {
+    scaleFactor: _scaleFactor,
+    scaleFactorLarge: _scaleFactorLarge,
+    baseFontSize: _baseFontSize,
+    baseFontSizeLarge: _baseFontSizeLarge,
+    baseLineHeight: _baseLineHeight,
+    baseLineHeightLarge: _baseLineHeightLarge,
+    minViewportWidth: _minViewportWidth,
+    maxViewportWidth: _maxViewportWidth,
+    lineHeights: _lineHeights || {
+      'default': {
+        '0': baseLineHeight * 1,
+        '1': baseLineHeight * 1.5,
+        '2': baseLineHeight * 2,
+        '3': baseLineHeight * 2.5
+      },
+      'large': {
+        '0': baseLineHeightLarge * 1,
+        '1': baseLineHeightLarge * 1.5,
+        '2': baseLineHeightLarge * 2,
+        '3': baseLineHeightLarge * 3
+      }
     },
-    'large': {
-      '0': baseLineHeightLarge * 1,
-      '1': baseLineHeightLarge * 1.5,
-      '2': baseLineHeightLarge * 2,
-      '3': baseLineHeightLarge * 3
+    fontScales: _fontScales || {
+      'default': {
+        '0': baseFontSize * (scaleFactor ** 0),
+        '1': baseFontSize * (scaleFactor ** 1),
+        '2': baseFontSize * (scaleFactor ** 2),
+        '3': baseFontSize * (scaleFactor ** 3)
+      },
+      'large': {
+        '0': baseFontSizeLarge * (scaleFactorLarge ** 0),
+        '1': baseFontSizeLarge * (scaleFactorLarge ** 0.5),
+        '2': baseFontSizeLarge * (scaleFactorLarge ** 1.5),
+        '3': baseFontSizeLarge * (scaleFactorLarge ** 2.5)
+      }
     }
-  }, true)
-  define('fontScales', _fontScales || {
-    'default': {
-      '0': baseFontSize * (scaleFactor ** 0),
-      '1': baseFontSize * (scaleFactor ** 1),
-      '2': baseFontSize * (scaleFactor ** 2),
-      '3': baseFontSize * (scaleFactor ** 3)
-    },
-    'large': {
-      '0': baseFontSizeLarge * (scaleFactorLarge ** 0),
-      '1': baseFontSizeLarge * (scaleFactorLarge ** 0.5),
-      '2': baseFontSizeLarge * (scaleFactorLarge ** 1.5),
-      '3': baseFontSizeLarge * (scaleFactorLarge ** 2.5)
-    }
-  }, true)
+  }
 
-_fontScale(scale = 0, defaultScale = true)
-  fontScales[defaultScale ? 'default' : 'large']['%s' % scale]
+  unless rulesCollection is defined
+    define('rulesCollection', {}, true)
 
-_lineHeight(scale = 0, defaultScale = true)
-  lineHeights[defaultScale ? 'default' : 'large']['%s' % scale]
+  define('rulesCollection', merge(rulesCollection, _rulesCollection), true)
+
+
+_fontScale(font, scale = 0, defaultScale = true)
+  rulesCollection[font]['fontScales'][defaultScale ? 'default' : 'large']['%s' % scale]
+
+_lineHeight(font, scale = 0, defaultScale = true)
+  rulesCollection[font]['lineHeights'][defaultScale ? 'default' : 'large']['%s' % scale]
 
 _stripUnit(num)
   unit(num, '')
 
-rhythm(scale = 0, ignoreFontSize = false, ignoreLineHeight = false, ignoreMargin = false)
+rhythm(scale = 0, ignoreFontSize = false, ignoreLineHeight = false, ignoreMargin = false, font = 'font1')
   unless ignoreLineHeight
-    customRhythm('line-height', scale, base: 'lineHeight')
+    customRhythm('line-height', scale, base: 'lineHeight', font: font)
 
   unless ignoreFontSize
-    customRhythm('font-size', scale, base: 'fontSize')
+    customRhythm('font-size', scale, base: 'fontSize', font: font)
 
   unless ignoreMargin
-    customRhythm('margin-bottom', scale)
+    customRhythm('margin-bottom', scale, font: font)
 
-customRhythm(property = 'margin-bottom', scale = 0, multiple = 1, base = 'baseLineHeight')
+customRhythm(property = 'margin-bottom', scale = 0, multiple = 1, base = 'baseLineHeight', font = 'font1')
   if base == 'lineHeight'
-    heightMin = _lineHeight(scale) * multiple
-    heightMax = _lineHeight(scale, false) * multiple
+    heightMin = _lineHeight(font, scale) * multiple
+    heightMax = _lineHeight(font, scale, false) * multiple
   else if base == 'fontSize'
-    heightMin = _fontScale(scale) * multiple
-    heightMax = _fontScale(scale, false) * multiple
+    heightMin = _fontScale(font, scale) * multiple
+    heightMax = _fontScale(font, scale, false) * multiple
   else
-    heightMin = baseLineHeight * multiple
-    heightMax = baseLineHeightLarge * multiple
+    heightMin = rulesCollection[font]['baseLineHeight'] * multiple
+    heightMax = rulesCollection[font]['baseLineHeightLarge'] * multiple
 
   {property}: heightMin
+
+  minViewportWidth = rulesCollection[font]['minViewportWidth']
+  maxViewportWidth = rulesCollection[font]['maxViewportWidth']
 
   @media screen and (min-width: minViewportWidth)
     {property}: 'calc(%s + %s * ((100vw - %s) / %s))' % (heightMin (_stripUnit(heightMax) - _stripUnit(heightMin)) minViewportWidth (_stripUnit(maxViewportWidth) - _stripUnit(minViewportWidth)))
