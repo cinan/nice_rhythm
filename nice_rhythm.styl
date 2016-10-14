@@ -30,30 +30,30 @@ _font = 'font1'
     maxViewportWidth: _maxViewportWidth,
     lineHeights: _lineHeights || {
       'default': {
-        '0': baseLineHeight * 1,
-        '1': baseLineHeight * 1.5,
-        '2': baseLineHeight * 2,
-        '3': baseLineHeight * 2.5
+        '0': _baseLineHeight * 1,
+        '1': _baseLineHeight * 1.5,
+        '2': _baseLineHeight * 2,
+        '3': _baseLineHeight * 2.5
       },
       'large': {
-        '0': baseLineHeightLarge * 1,
-        '1': baseLineHeightLarge * 1.5,
-        '2': baseLineHeightLarge * 2,
-        '3': baseLineHeightLarge * 3
+        '0': _baseLineHeightLarge * 1,
+        '1': _baseLineHeightLarge * 1.5,
+        '2': _baseLineHeightLarge * 2,
+        '3': _baseLineHeightLarge * 3
       }
     },
     fontScales: _fontScales || {
       'default': {
-        '0': baseFontSize * (scaleFactor ** 0),
-        '1': baseFontSize * (scaleFactor ** 1),
-        '2': baseFontSize * (scaleFactor ** 2),
-        '3': baseFontSize * (scaleFactor ** 3)
+        '0': _baseFontSize * (_scaleFactor ** 0),
+        '1': _baseFontSize * (_scaleFactor ** 1),
+        '2': _baseFontSize * (_scaleFactor ** 2),
+        '3': _baseFontSize * (_scaleFactor ** 3)
       },
       'large': {
-        '0': baseFontSizeLarge * (scaleFactorLarge ** 0),
-        '1': baseFontSizeLarge * (scaleFactorLarge ** 0.5),
-        '2': baseFontSizeLarge * (scaleFactorLarge ** 1.5),
-        '3': baseFontSizeLarge * (scaleFactorLarge ** 2.5)
+        '0': _baseFontSizeLarge * (_scaleFactorLarge ** 0),
+        '1': _baseFontSizeLarge * (_scaleFactorLarge ** 0.5),
+        '2': _baseFontSizeLarge * (_scaleFactorLarge ** 1.5),
+        '3': _baseFontSizeLarge * (_scaleFactorLarge ** 2.5)
       }
     }
   }
