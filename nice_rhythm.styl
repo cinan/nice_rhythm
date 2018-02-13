@@ -1,5 +1,6 @@
 // Nice Rhythm
 // Fluid vertical rhythm with modular scale. Mobile first.
+// Interpolation idea from https://medium.com/@jakobud/css-polyfluidsizing-using-calc-vw-breakpoints-and-linear-equations-8e15505d21ab
 //
 // @cinan
 // https://github.com/cinan/nice_rhythm
@@ -70,8 +71,11 @@ _fontScale(font, scale = 0, defaultScale = true)
 _lineHeight(font, scale = 0, defaultScale = true)
   rulesCollection[font]['lineHeights'][defaultScale ? 'default' : 'large']['%s' % scale]
 
-_stripUnit(num)
-  unit(num, '')
+_interpolate(minSize, minViewport, maxSize, maxViewport)
+  slope = round((maxSize - minSize) / (maxViewport - minViewport), 7);
+  yIntercept = round(minSize - slope * minViewport, 5);
+
+  return 'calc(%s + %s)' % ((slope*100)vw yIntercept);
 
 rhythm(scale = 0, ignoreFontSize = false, ignoreLineHeight = false, ignoreMargin = false, font = 'font1')
   unless ignoreLineHeight
@@ -100,7 +104,7 @@ customRhythm(property = 'margin-bottom', scale = 0, multiple = 1, base = 'baseLi
   maxViewportWidth = rulesCollection[font]['maxViewportWidth']
 
   @media screen and (min-width: minViewportWidth)
-    {property}: 'calc(%s + %s * ((100vw - %s) / %s))' % (heightMin (_stripUnit(heightMax) - _stripUnit(heightMin)) minViewportWidth (_stripUnit(maxViewportWidth) - _stripUnit(minViewportWidth)))
+    {property}: _interpolate(heightMin, minViewportWidth, heightMax, maxViewportWidth)
 
   @media screen and (min-width: maxViewportWidth)
     {property}: heightMax
